@@ -5,6 +5,16 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
+from jarvis_assistant.core.config import AppConfig
+
+
+class MemoryStore:
+    """SQLite-backed structured memory store."""
+
+    def __init__(self, config: AppConfig) -> None:
+        self.sqlite_path: Path = config.sqlite_path
+        self.sqlite_path.parent.mkdir(parents=True, exist_ok=True)
+        self.conn = sqlite3.connect(self.sqlite_path)
 from jarvis_assistant.core.config import MemoryConfig
 
 
@@ -40,6 +50,7 @@ class MemoryStore:
     def add_interaction(self, text: str, intent: str, result: dict[str, Any]) -> None:
         self.conn.execute(
             "INSERT INTO interactions(text, intent, result) VALUES (?, ?, ?)",
+            (text, intent, json.dumps(result, default=str)),
             (text, intent, json.dumps(result)),
         )
         self.conn.commit()

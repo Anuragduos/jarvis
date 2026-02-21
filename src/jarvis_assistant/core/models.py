@@ -6,6 +6,18 @@ from typing import Any
 
 
 class AssistantMode(str, Enum):
+    """Execution modes supported by routing."""
+
+    OFFLINE = "offline"
+    ONLINE = "online"
+    HYBRID = "hybrid"
+    SAFE_MODE = "safe_mode"
+
+
+@dataclass(slots=True)
+class IntentResult:
+    """Intent extraction output."""
+
     OFFLINE = "offline"
     ONLINE = "online"
     HYBRID = "hybrid"
@@ -19,6 +31,10 @@ class IntentResult:
     raw_text: str = ""
 
 
+@dataclass(slots=True)
+class ActionPlan:
+    """Executable action plan."""
+
 @dataclass
 class ActionPlan:
     name: str
@@ -26,6 +42,10 @@ class ActionPlan:
     requires_confirmation: bool = False
     sensitive: bool = False
 
+
+@dataclass(slots=True)
+class AssistantResponse:
+    """Assistant response payload for UI/CLI."""
 
 @dataclass
 class AssistantResponse:
