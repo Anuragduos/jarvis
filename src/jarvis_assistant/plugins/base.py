@@ -9,6 +9,8 @@ from typing import Any
 class PluginMetadata:
     """Plugin descriptor metadata."""
 
+@dataclass
+class PluginMetadata:
     name: str
     version: str
     description: str
@@ -30,3 +32,12 @@ class PluginBase(ABC):
     @abstractmethod
     def handle(self, command: str, context: dict[str, Any]) -> dict[str, Any]:
         """Executes plugin command."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def can_handle(self, command: str) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def handle(self, command: str, context: dict[str, Any]) -> dict[str, Any]:
+        raise NotImplementedError

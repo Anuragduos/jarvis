@@ -21,6 +21,12 @@ from jarvis_assistant.runtime.worker_pool import AsyncWorkerPool
 from jarvis_assistant.security.permissions import PermissionManager
 from jarvis_assistant.transactions.undo import CommandHistoryRegistry
 from jarvis_assistant.utils.diagnostics import SelfDiagnostics
+from jarvis_assistant.ai.nlp_engine import NLPEngine
+from jarvis_assistant.ai.reasoning import ReasoningEngine
+from jarvis_assistant.automation.executor import AutomationExecutor
+from jarvis_assistant.memory.context_manager import ContextManager
+from jarvis_assistant.memory.store import MemoryStore
+from jarvis_assistant.security.permissions import PermissionManager
 
 from .assistant import JarvisAssistant
 from .config import AppConfig
@@ -102,6 +108,17 @@ class ServiceContainer:
     def build_assistant(self) -> JarvisAssistant:
         """Builds assistant orchestrator service."""
 
+    def __init__(self, config: AppConfig) -> None:
+        self.config = config
+        self.memory_store = MemoryStore(config.memory)
+        self.context_manager = ContextManager(self.memory_store)
+        self.permissions = PermissionManager(config.security)
+        self.nlp = NLPEngine()
+        self.reasoning = ReasoningEngine(config=config)
+        self.executor = AutomationExecutor(permission_manager=self.permissions)
+        self.decision = ModeDecisionEngine()
+
+    def build_assistant(self) -> JarvisAssistant:
         return JarvisAssistant(
             config=self.config,
             nlp=self.nlp,
@@ -124,3 +141,4 @@ class ServiceContainer:
         """Graceful shutdown for runtime resources."""
 
         self.worker_pool.shutdown()
+        )

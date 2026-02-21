@@ -15,6 +15,14 @@ class MemoryStore:
         self.sqlite_path: Path = config.sqlite_path
         self.sqlite_path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(self.sqlite_path)
+from jarvis_assistant.core.config import MemoryConfig
+
+
+class MemoryStore:
+    def __init__(self, config: MemoryConfig) -> None:
+        self.config = config
+        self.config.sqlite_path.parent.mkdir(parents=True, exist_ok=True)
+        self.conn = sqlite3.connect(self.config.sqlite_path)
         self._ensure_tables()
 
     def _ensure_tables(self) -> None:
@@ -43,6 +51,7 @@ class MemoryStore:
         self.conn.execute(
             "INSERT INTO interactions(text, intent, result) VALUES (?, ?, ?)",
             (text, intent, json.dumps(result, default=str)),
+            (text, intent, json.dumps(result)),
         )
         self.conn.commit()
 

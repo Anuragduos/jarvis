@@ -18,6 +18,13 @@ class AssistantMode(str, Enum):
 class IntentResult:
     """Intent extraction output."""
 
+    OFFLINE = "offline"
+    ONLINE = "online"
+    HYBRID = "hybrid"
+
+
+@dataclass
+class IntentResult:
     intent: str
     confidence: float
     entities: dict[str, Any] = field(default_factory=dict)
@@ -28,6 +35,8 @@ class IntentResult:
 class ActionPlan:
     """Executable action plan."""
 
+@dataclass
+class ActionPlan:
     name: str
     steps: list[dict[str, Any]]
     requires_confirmation: bool = False
@@ -38,6 +47,8 @@ class ActionPlan:
 class AssistantResponse:
     """Assistant response payload for UI/CLI."""
 
+@dataclass
+class AssistantResponse:
     text: str
     executed: bool = False
     metadata: dict[str, Any] = field(default_factory=dict)
